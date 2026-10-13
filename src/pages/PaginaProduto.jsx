@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { formatarPreco } from '../utils/formatarPreco'
 
 export default function PaginaProduto({ produtos, onAdicionar, onRegistrarInteresse, listaEspera = {} }) {
   const { id } = useParams()
@@ -58,7 +59,11 @@ export default function PaginaProduto({ produtos, onAdicionar, onRegistrarIntere
           <p className="card-avaliacao">
             ★ {produto.rating.rate} <span>({produto.rating.count} avaliações)</span>
           </p>
-          <p className="detalhe-preco">R$ {produto.price.toFixed(2).replace('.', ',')}</p>
+          {produto.precoOriginal && (
+            <p className="preco-original">{formatarPreco(produto.precoOriginal)}</p>
+          )}
+          <p className="detalhe-preco">{formatarPreco(produto.price)}</p>
+          {produto.price > 100 && <span className="selo selo-frete">Frete grátis</span>}
           <p className="detalhe-descricao">{produto.description}</p>
           <p className="detalhe-estoque">{produto.estoque} unidades disponíveis</p>
 
@@ -118,7 +123,8 @@ export default function PaginaProduto({ produtos, onAdicionar, onRegistrarIntere
               </div>
               <h3 className="card-titulo">{item.title}</h3>
             </Link>
-            <p className="preco">R$ {Number(item.price).toFixed(2).replace('.', ',')}</p>
+            <p className="preco">{formatarPreco(item.price)}</p>
+            {item.price > 100 && <span className="selo selo-frete">Frete grátis</span>}
             <button className="botao" onClick={() => onAdicionar(item)}>
               Adicionar ao carrinho
             </button>
