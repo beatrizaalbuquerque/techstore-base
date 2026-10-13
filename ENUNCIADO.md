@@ -4,7 +4,7 @@ Você assumiu a manutenção da TechStore, uma loja virtual em React que já est
 
 ## Regras
 
-* Resolva os 2 itens obrigatórios.
+* Resolva o s 2 itens obrigatórios.
 * Escolha 1 item do Grupo 1 e 1 item do Grupo 2.
 * Siga a organização do projeto descrita no README.
 * Use apenas os recursos de JavaScript e React vistos em aula.
