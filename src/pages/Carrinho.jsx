@@ -61,9 +61,14 @@ export default function Carrinho({ carrinho, produtos, clienteAtual, onAdicionar
                 <p className="item-preco">{formatarPreco(item.produto.price)}</p>
               </div>
               <span className="item-quantidade">{item.quantidade} un.</span>
-              <button className="botao-texto" onClick={() => onRemover(item.produto.id)}>
-                Remover 1
-              </button>
+              <div className="item-acoes">
+                <button className="botao-texto" onClick={() => onAdicionar(item.produto)}>
+                  +1
+                </button>
+                <button className="botao-texto" onClick={() => onRemover(item.produto.id)}>
+                  Remover 1
+                </button>
+              </div>
             </li>
           ))}
         </ul>
