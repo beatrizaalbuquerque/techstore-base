@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-export default function PaginaProduto({ produtos, onAdicionar }) {
+export default function PaginaProduto({ produtos, onAdicionar, onRegistrarInteresse, listaEspera = {} }) {
   const { id } = useParams()
   const produto = produtos.find((item) => item.id === id)
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [mensagem, setMensagem] = useState('')
 
   if (!produto) {
     return (
@@ -15,9 +19,26 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
     )
   }
 
+  const interessados = listaEspera[produto.id] ?? []
   const relacionados = produtos
-    .filter((item) => item.category === produto.category && item.id !== produto.id)
+    .filter(
+      (item) => item.category === produto.category && item.id !== produto.id && item.estoque > 0
+    )
     .slice(0, 4)
+
+  function enviarListaDeEspera(evento) {
+    evento.preventDefault()
+
+    if (!nome.trim() || !email.trim()) {
+      setMensagem('Preencha nome e e-mail para receber o aviso.')
+      return
+    }
+
+    onRegistrarInteresse?.(produto.id, nome.trim(), email.trim())
+    setNome('')
+    setEmail('')
+    setMensagem('Você foi adicionado à lista de espera. Vamos avisar quando o produto voltar.')
+  }
 
   return (
     <section>
@@ -41,13 +62,44 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
           <p className="detalhe-descricao">{produto.description}</p>
           <p className="detalhe-estoque">{produto.estoque} unidades disponíveis</p>
 
-          <button
-            className="botao botao-grande"
-            onClick={() => onAdicionar(produto)}
-            disabled={produto.estoque === 0}
-          >
-            Adicionar ao carrinho
-          </button>
+          {produto.estoque === 0 ? (
+            <div className="estado-vazio">
+              <p>Produto esgotado.</p>
+              <form onSubmit={enviarListaDeEspera}>
+                <div>
+                  <label htmlFor="nome-aviso">Nome</label>
+                  <input
+                    id="nome-aviso"
+                    value={nome}
+                    onChange={(evento) => setNome(evento.target.value)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email-aviso">E-mail</label>
+                  <input
+                    id="email-aviso"
+                    type="email"
+                    value={email}
+                    onChange={(evento) => setEmail(evento.target.value)}
+                  />
+                </div>
+                <button className="botao botao-grande" type="submit">
+                  Avisar quando voltar
+                </button>
+              </form>
+              {mensagem && <p>{mensagem}</p>}
+              {interessados.length > 0 && (
+                <p>
+                  {interessados.length} pessoa{interessados.length > 1 ? 's' : ''} na lista de
+                  espera.
+                </p>
+              )}
+            </div>
+          ) : (
+            <button className="botao botao-grande" onClick={() => onAdicionar(produto)}>
+              Adicionar ao carrinho
+            </button>
+          )}
 
           <ul className="detalhe-garantias">
             <li>Troca grátis em até 30 dias</li>
